@@ -19,20 +19,19 @@ class ClumpExecutionSpec extends Spec {
     }
 
     protected val source1 = Clump.source((i: Set[Int]) => fetchFunction(source1Fetches, i))
-    val source2 = Clump.source((i: Set[Int]) => fetchFunction(source2Fetches, i))
-    val source3 = Clump.source((i: Set[Int]) => fetchFunction(source3Fetches, i))
+    val source2           = Clump.source((i: Set[Int]) => fetchFunction(source2Fetches, i))
+    val source3           = Clump.source((i: Set[Int]) => fetchFunction(source3Fetches, i))
   }
 
   "batches requests" >> {
 
     "for multiple clumps created from traversed inputs" in new Context {
       val clump =
-        Clump.traverse(List(1, 2, 3, 4)) {
-          i =>
-            if (i <= 2)
-              source1.get(i)
-            else
-              source2.get(i)
+        Clump.traverse(List(1, 2, 3, 4)) { i =>
+          if (i <= 2)
+            source1.get(i)
+          else
+            source2.get(i)
         }
 
       clumpResult(clump) mustEqual Some(List(10, 20, 30, 40))
@@ -99,7 +98,7 @@ class ClumpExecutionSpec extends Spec {
         val clump =
           for {
             ints1 <- Clump.collect(source1.get(1), source1.get(2))
-            int2 <- source2.get(3) if (int2 != 999)
+            int2  <- source2.get(3) if (int2 != 999)
           } yield (ints1, int2)
 
         clumpResult(clump) mustEqual Some(List(10, 20), 30)
@@ -122,7 +121,7 @@ class ClumpExecutionSpec extends Spec {
       "using a future clump as base" in new Context {
         val clump =
           for {
-            int <- Clump.future(Future.successful(1))
+            int      <- Clump.future(Future.successful(1))
             collect1 <- Clump.collect(source1.get(int))
             collect2 <- Clump.collect(source2.get(int))
           } yield (collect1, collect2)
@@ -135,12 +134,12 @@ class ClumpExecutionSpec extends Spec {
       "complex scenario" in new Context {
         val clump =
           for {
-            const1 <- Clump.value(1)
-            const2 <- Clump.value(2)
-            collect1 <- Clump.collect(source1.get(const1), source2.get(const2))
-            collect2 <- Clump.collect(source1.get(const1), source2.get(const2)) if (true)
+            const1           <- Clump.value(1)
+            const2           <- Clump.value(2)
+            collect1         <- Clump.collect(source1.get(const1), source2.get(const2))
+            collect2         <- Clump.collect(source1.get(const1), source2.get(const2)) if (true)
             (join1a, join1b) <- Clump.value(4).join(Clump.value(5))
-            join2 <- source1.get(collect1).join(source2.get(join1b))
+            join2            <- source1.get(collect1).join(source2.get(join1b))
           } yield (const1, const2, collect1, collect2, (join1a, join1b), join2)
 
         clumpResult(clump) mustEqual Some((1, 2, List(10, 20), List(10, 20), (4, 5), (List(100, 200), 50)))

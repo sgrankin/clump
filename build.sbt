@@ -3,7 +3,7 @@ val commonSettings = Seq(
   scalaVersion := "2.11.11",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   libraryDependencies ++= Seq(
-    "org.specs2" %% "specs2" % "2.4.2" % "test",
+    "org.specs2"  %% "specs2"      % "2.4.2" % "test",
     "org.mockito" % "mockito-core" % "1.9.5" % "test"
   ),
   scalacOptions ++= Seq(

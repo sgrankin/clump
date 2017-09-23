@@ -26,33 +26,37 @@ private[getclump] final class ClumpFetcher[T, U](source: ClumpSource[T, U]) {
   private[this] def fetchBatch(batch: List[T])(implicit ec: ExecutionContext) = {
     val results = fetchWithRetries(batch, 0)
     for (input <- batch) {
-      val fetch = fetches(input)
+      val fetch       = fetches(input)
       val fetchResult = results.map(_.get(input).map(_.get))
       fetchResult.onComplete(fetch.complete)
     }
     results
   }
 
-  private[this] def fetchWithRetries(batch: List[T], retries: Int)(implicit ec: ExecutionContext): Future[Map[T, Try[U]]] =
-    source.fetch(batch).flatMap { results =>
-      // If there are individual failures then just retry those entries
-      val (toRetry, noRetry) = results.partition {
-        case (_, Success(_)) => false
-        case (_, Failure(e)) => maxRetries(e) > retries
-      }
+  private[this] def fetchWithRetries(batch: List[T], retries: Int)(
+      implicit ec: ExecutionContext): Future[Map[T, Try[U]]] =
+    source
+      .fetch(batch)
+      .flatMap { results =>
+        // If there are individual failures then just retry those entries
+        val (toRetry, noRetry) = results.partition {
+          case (_, Success(_)) => false
+          case (_, Failure(e)) => maxRetries(e) > retries
+        }
 
-      val toRetryFuture = if (toRetry.nonEmpty) {
-        fetchWithRetries(toRetry.keys.toList, retries + 1)
-      } else {
-        Future.successful(Map.empty[T, Try[U]])
-      }
+        val toRetryFuture = if (toRetry.nonEmpty) {
+          fetchWithRetries(toRetry.keys.toList, retries + 1)
+        } else {
+          Future.successful(Map.empty[T, Try[U]])
+        }
 
-      toRetryFuture.map(_ ++ noRetry)
-    }.recoverWith {
-      // If the entire fetch fails then retry the whole thing
-      case exception: Throwable if maxRetries(exception) > retries =>
-        fetchWithRetries(batch, retries + 1)
-    }
+        toRetryFuture.map(_ ++ noRetry)
+      }
+      .recoverWith {
+        // If the entire fetch fails then retry the whole thing
+        case exception: Throwable if maxRetries(exception) > retries =>
+          fetchWithRetries(batch, retries + 1)
+      }
 
   private[this] def maxRetries(exception: Throwable) =
     source._maxRetries.lift(exception).getOrElse(0)

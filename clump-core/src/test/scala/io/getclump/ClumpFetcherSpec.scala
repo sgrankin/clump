@@ -42,7 +42,7 @@ class ClumpFetcherSpec extends Spec {
     val source = Clump.source(repo.fetch _)
 
     when(repo.fetch(Set(1, 2))).thenReturn(Future(Map(1 -> 10, 2 -> 20)))
-    when(repo.fetch(Set(3))).thenReturn(Future(Map(3 -> 30)))
+    when(repo.fetch(Set(3))).thenReturn(Future(Map(3    -> 30)))
 
     val clump1 = Clump.traverse(List(1, 2))(source.get)
     val clump2 = Clump.traverse(List(2, 3))(source.get)
@@ -64,7 +64,7 @@ class ClumpFetcherSpec extends Spec {
     val source = Clump.source(repo.fetch _).maxBatchSize(2)
 
     when(repo.fetch(Set(1, 2))).thenReturn(Future(Map(1 -> 10, 2 -> 20)))
-    when(repo.fetch(Set(3))).thenReturn(Future(Map(3 -> 30)))
+    when(repo.fetch(Set(3))).thenReturn(Future(Map(3    -> 30)))
 
     val clump = Clump.traverse(List(1, 2, 3))(source.get)
 
@@ -122,7 +122,7 @@ class ClumpFetcherSpec extends Spec {
 
       clumpResult(source.get(Set(1, 2))) mustEqual Some(Set(10, 20))
 
-      verify(repo, times(1)).fetch(Set(1,2))
+      verify(repo, times(1)).fetch(Set(1, 2))
       verify(repo, times(1)).fetch(Set(2))
       verifyNoMoreInteractions(repo)
     }
@@ -141,7 +141,7 @@ class ClumpFetcherSpec extends Spec {
 
       clumpResult(source.get(Set(1, 2))) must throwA[IllegalStateException]
 
-      verify(repo, times(1)).fetch(Set(1,2))
+      verify(repo, times(1)).fetch(Set(1, 2))
       verify(repo, times(1)).fetch(Set(2))
       verifyNoMoreInteractions(repo)
     }

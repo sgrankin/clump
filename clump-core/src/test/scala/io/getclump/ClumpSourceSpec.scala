@@ -79,7 +79,7 @@ class ClumpSourceSpec extends Spec {
     }
 
     "with values from the outer scope" in new Context {
-      val scope = 1
+      val scope  = 1
       val source = Clump.source((inputs: Set[Int]) => repo.fetchWithScope(scope, inputs))
 
       when(repo.fetchWithScope(scope, Set(1))).thenReturn(Future(Map(1 -> 2)))
@@ -97,7 +97,7 @@ class ClumpSourceSpec extends Spec {
       verifyNoMoreInteractions(repo)
     }
   }
-  
+
   "limits the batch size to 100 by default" in new Context {
     val source = Clump.source(repo.fetch _)
     source.maxBatchSize mustEqual 100

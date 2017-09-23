@@ -23,7 +23,7 @@ private[getclump] final class ClumpContext {
   private[this] def getAllUpstream(clumps: List[Clump[_]]): List[Clump[_]] = {
     clumps match {
       case Nil => Nil
-      case _ => clumps ::: getAllUpstream(clumps.flatMap(_.upstream))
+      case _   => clumps ::: getAllUpstream(clumps.flatMap(_.upstream))
     }
   }
 
@@ -33,20 +33,22 @@ private[getclump] final class ClumpContext {
   private[this] def groupClumpsByLevel(clumps: List[Clump[_]]): List[List[Clump[_]]] = {
     // 1. Get the longest distance from this Clump to the bottom of the tree (memoized function)
     val m = mutable.HashMap.empty[Clump[_], Int]
-    def getDistanceFromBottom(clump: Clump[_]): Int = m.getOrElseUpdate(clump, {
-      clump.upstream match {
-        case Nil => 0
-        case list => list.map(getDistanceFromBottom).max + 1
-      }
-    })
+    def getDistanceFromBottom(clump: Clump[_]): Int =
+      m.getOrElseUpdate(clump, {
+        clump.upstream match {
+          case Nil  => 0
+          case list => list.map(getDistanceFromBottom).max + 1
+        }
+      })
 
     // 2. Group clumps by these levels and return the deepest level first
-    SortedMap(clumps.groupBy(getDistanceFromBottom).toSeq:_*).values.toList
+    SortedMap(clumps.groupBy(getDistanceFromBottom).toSeq: _*).values.toList
   }
 
-  private[this] def flushDownstreamByLevel(levels: List[List[Clump[_]]])(implicit ec: ExecutionContext): Future[Unit] = {
+  private[this] def flushDownstreamByLevel(levels: List[List[Clump[_]]])(
+      implicit ec: ExecutionContext): Future[Unit] = {
     levels match {
-      case Nil => Future.successful(())
+      case Nil          => Future.successful(())
       case head :: tail =>
         // 1. Resolve the downstream clumps (will succeed because deeper downstream clumps have already been resolved)
         Future.sequence(head.map(_.downstream)).flatMap { res =>
@@ -61,7 +63,7 @@ private[getclump] final class ClumpContext {
 
   // Flush all the ClumpFetch instances in a list of clumps, calling their associated fetch functions in parallel if possible
   private[this] def flushFetchesInParallel(clumps: List[Clump[_]])(implicit ec: ExecutionContext) = {
-    val fetches = filterFetches(clumps)
+    val fetches   = filterFetches(clumps)
     val byFetcher = fetches.groupBy(fetch => fetcherFor(fetch.source))
     for ((fetcher, fetches) <- byFetcher)
       fetches.foreach(_.attachTo(fetcher))
@@ -76,7 +78,8 @@ private[getclump] final class ClumpContext {
 
   private[this] def fetcherFor(source: ClumpSource[_, _]) =
     synchronized {
-      fetchers.getOrElseUpdate(source, new ClumpFetcher(source))
+      fetchers
+        .getOrElseUpdate(source, new ClumpFetcher(source))
         .asInstanceOf[ClumpFetcher[Any, Any]]
     }
 }

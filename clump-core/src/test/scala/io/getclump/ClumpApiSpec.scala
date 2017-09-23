@@ -52,17 +52,17 @@ class ClumpApiSpec extends Spec {
     "allows to create a clump traversing multiple inputs (Clump.traverse)" in {
       "list" in {
         val inputs = List(1, 2, 3)
-        val clump = Clump.traverse(inputs)(i => Clump.value(i + 1))
+        val clump  = Clump.traverse(inputs)(i => Clump.value(i + 1))
         clumpResult(clump) ==== Some(List(2, 3, 4))
       }
       "set" in {
         val inputs = Set(1, 2, 3)
-        val clump = Clump.traverse(inputs)(i => Clump.value(i + 1))
+        val clump  = Clump.traverse(inputs)(i => Clump.value(i + 1))
         clumpResult(clump) ==== Some(Set(2, 3, 4))
       }
       "seq" in {
         val inputs = Seq(1, 2, 3)
-        val clump = Clump.traverse(inputs)(i => Clump.value(i + 1))
+        val clump  = Clump.traverse(inputs)(i => Clump.value(i + 1))
         clumpResult(clump) ==== Some(Seq(2, 3, 4))
       }
       "varargs" in {
@@ -369,7 +369,7 @@ class ClumpApiSpec extends Spec {
     }
 
     "can be made optional (clump.optional) to avoid lossy joins" in {
-      val clump: Clump[String] = Clump.empty
+      val clump: Clump[String]                 = Clump.empty
       val optionalClump: Clump[Option[String]] = clump.optional
       clumpResult(optionalClump) ==== Some(None)
 
