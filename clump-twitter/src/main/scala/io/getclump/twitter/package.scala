@@ -1,6 +1,6 @@
-package io
+package io.getclump
 
-package object getclump {
+package object twitter {
 
   // Execution contexts are not used by twitter-util so this allows you not to have to specify it
   private[getclump] implicit val ec = scala.concurrent.ExecutionContext.global
