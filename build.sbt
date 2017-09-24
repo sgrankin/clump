@@ -61,10 +61,17 @@ val commonSettings = Seq(
           </developers>
 )
 
-lazy val `clump-core` = (project in file("clump-core"))
+lazy val `clump-twitter` = (project in file("build/twitter"))
   .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies += "com.twitter" %% "util-core" % "7.1.0",
+    sourceDirectory := (baseDirectory in ThisBuild).value / "clump-core" / "src",
+    sources in Compile :=
+      ((baseDirectory in ThisBuild).value / "clump-twitter" / "src" / "main" / "scala" / "io" / "getclump" / "package.scala")
+        +: (sources in Compile).value.filter(
+        _ != (baseDirectory in ThisBuild).value / "clump-core" / "src" / "main" / "scala" / "io" / "getclump" / "package.scala")
+  )
 
-lazy val `clump-twitter` = (project in file("clump-twitter"))
-  .dependsOn(`clump-core`)
+lazy val `clump-scala` = (project in file("build/scala"))
   .settings(commonSettings: _*)
-  .settings(libraryDependencies += "com.twitter" %% "util-core" % "7.1.0")
+  .settings(sourceDirectory := (baseDirectory in ThisBuild).value / "clump-core" / "src")
