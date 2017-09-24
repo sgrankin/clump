@@ -15,9 +15,9 @@ val commonSettings = Seq(
     "-language:implicitConversions",
     "-language:reflectiveCalls"
   )
-) ++ releaseSettings ++ Seq(
-  ReleaseKeys.crossBuild := true,
-  ReleaseKeys.publishArtifactsAction := PgpKeys.publishSigned.value,
+) ++ Seq(
+  releaseCrossBuild := true,
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
@@ -26,8 +26,8 @@ val commonSettings = Seq(
     else
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
   },
-  ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 100,
-  ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := false,
+  coverageMinimum := 100,
+  coverageFailOnMinimum := false,
   sonatypeProfileName := "io.getclump",
   pomExtra :=
     <url>http://github.com/getclump/clump</url>
