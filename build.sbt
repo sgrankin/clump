@@ -1,10 +1,14 @@
+val specs2Version  = "3.9.5"
+val twitterVersion = "7.1.0"
+
 val commonSettings = Seq(
   organization := "io.getclump",
   scalaVersion := "2.11.11",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   libraryDependencies ++= Seq(
-    "org.specs2"  %% "specs2"      % "2.4.2" % "test",
-    "org.mockito" % "mockito-core" % "1.9.5" % "test"
+    "org.specs2"  %% "specs2-core"  % specs2Version  % "test",
+    "org.specs2"  %% "specs2-junit" % specs2Version  % "test",
+    "org.specs2"  %% "specs2-mock"  % specs2Version  % "test",
   ),
   scalacOptions ++= Seq(
     "-deprecation",
@@ -14,8 +18,8 @@ val commonSettings = Seq(
     "-language:higherKinds",
     "-language:implicitConversions",
     "-language:reflectiveCalls"
-  )
-) ++ Seq(
+  ),
+  fork in Test := true, // avoid mockito+crossbuild strangeness
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
@@ -64,7 +68,7 @@ val commonSettings = Seq(
 lazy val `clump-twitter` = (project in file("build/twitter"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies += "com.twitter" %% "util-core" % "7.1.0",
+    libraryDependencies += "com.twitter" %% "util-core" % twitterVersion,
     sourceDirectory := (baseDirectory in ThisBuild).value / "clump-core" / "src",
     sources in Compile :=
       ((baseDirectory in ThisBuild).value / "clump-twitter" / "src" / "main" / "scala" / "io" / "getclump" / "package.scala")

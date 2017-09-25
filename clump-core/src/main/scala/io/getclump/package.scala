@@ -1,7 +1,6 @@
 package io
 
 package object getclump {
-
   private[getclump] type Try[+T] = scala.util.Try[T]
   private[getclump] val Try     = scala.util.Try
   private[getclump] val Success = scala.util.Success
@@ -12,6 +11,8 @@ package object getclump {
 
   private[getclump] type Future[+T] = scala.concurrent.Future[T]
   private[getclump] val Future = scala.concurrent.Future
+
+  private[getclump] type ExecutionContext = scala.concurrent.ExecutionContext
 
   private[getclump] def awaitResult[T](future: Future[T]) =
     scala.concurrent.Await.result(future, scala.concurrent.duration.Duration.Inf)

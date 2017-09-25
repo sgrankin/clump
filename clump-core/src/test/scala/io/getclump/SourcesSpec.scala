@@ -1,6 +1,7 @@
 package io.getclump
 
 import org.junit.runner.RunWith
+import scala.concurrent.ExecutionContext.Implicits.global
 import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])

@@ -7,6 +7,7 @@ import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.Mockito.when
 import org.specs2.specification.Scope
 import org.specs2.runner.JUnitRunner
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @RunWith(classOf[JUnitRunner])
 class ClumpFetcherSpec extends Spec {

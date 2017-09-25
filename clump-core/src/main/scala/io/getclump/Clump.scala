@@ -1,7 +1,6 @@
 package io.getclump
 
 import scala.collection.generic.CanBuildFrom
-import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 
 /**

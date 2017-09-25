@@ -2,7 +2,6 @@ package io.getclump
 
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext
 
 private[getclump] final class ClumpContext {
 

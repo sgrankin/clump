@@ -2,6 +2,7 @@ package io.getclump
 
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @RunWith(classOf[JUnitRunner])
 class ClumpApiSpec extends Spec {

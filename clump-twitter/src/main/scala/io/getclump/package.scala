@@ -1,10 +1,6 @@
 package io
 
 package object getclump {
-
-  // Execution contexts are not used by twitter-util so this allows you not to have to specify it
-  private[getclump] implicit val ec = scala.concurrent.ExecutionContext.global
-
   private[getclump] type Try[+T] = com.twitter.util.Try[T]
   private[getclump] val Try     = com.twitter.util.Try
   private[getclump] val Success = com.twitter.util.Return
@@ -15,6 +11,9 @@ package object getclump {
 
   private[getclump] type Future[+T] = com.twitter.util.Future[T]
   private[getclump] val Future = com.twitter.util.Future
+
+  // Execution contexts are not used by twitter-util so this allows you not to have to specify it
+  private[getclump] type ExecutionContext = DummyImplicit
 
   implicit class PromiseBridge[T](val promise: Promise[T]) extends AnyVal {
     def complete(result: com.twitter.util.Try[T])           = promise.update(result)

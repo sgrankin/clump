@@ -1,7 +1,6 @@
 package io.getclump
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext
 
 private[getclump] final class ClumpFetcher[T, U](source: ClumpSource[T, U]) {
 
