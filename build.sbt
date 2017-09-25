@@ -6,9 +6,9 @@ val commonSettings = Seq(
   scalaVersion := "2.11.11",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   libraryDependencies ++= Seq(
-    "org.specs2"  %% "specs2-core"  % specs2Version  % "test",
-    "org.specs2"  %% "specs2-junit" % specs2Version  % "test",
-    "org.specs2"  %% "specs2-mock"  % specs2Version  % "test",
+    "org.specs2" %% "specs2-core"  % specs2Version % "test",
+    "org.specs2" %% "specs2-junit" % specs2Version % "test",
+    "org.specs2" %% "specs2-mock"  % specs2Version % "test"
   ),
   scalacOptions ++= Seq(
     "-deprecation",
@@ -21,18 +21,12 @@ val commonSettings = Seq(
   ),
   fork in Test := true, // avoid mockito+crossbuild strangeness
   releaseCrossBuild := true,
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+//  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
   coverageMinimum := 100,
   coverageFailOnMinimum := false,
   sonatypeProfileName := "io.getclump",
+  licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0")),
   pomExtra :=
     <url>http://github.com/getclump/clump</url>
           <licenses>
@@ -66,7 +60,7 @@ val commonSettings = Seq(
 )
 
 lazy val `clump-twitter` = (project in file("build/twitter"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(
     libraryDependencies += "com.twitter" %% "util-core" % twitterVersion,
     sourceDirectory := (baseDirectory in ThisBuild).value / "clump-core" / "src",
@@ -77,5 +71,12 @@ lazy val `clump-twitter` = (project in file("build/twitter"))
   )
 
 lazy val `clump-scala` = (project in file("build/scala"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(sourceDirectory := (baseDirectory in ThisBuild).value / "clump-core" / "src")
+
+lazy val root = (project in file("."))
+  .settings(commonSettings)
+  .aggregate(`clump-twitter`, `clump-scala`)
+  .settings(
+    publishArtifact := false // root does not publish
+  )
