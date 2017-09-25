@@ -78,5 +78,6 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .aggregate(`clump-twitter`, `clump-scala`)
   .settings(
+    bintrayRelease := {},
     publishArtifact := false // root does not publish
   )
